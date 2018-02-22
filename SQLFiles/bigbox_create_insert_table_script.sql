@@ -1,0 +1,53 @@
+-- Can drop DB first, IF no other db users are using your DB
+-- DROP DATABASE IF EXISTS bb;
+-- CREATE DATABASE bb;
+-- USE bb;
+-- or 
+-- individually drop tables in reverse order of FK constraINTs
+--
+DROP TABLE IF EXISTS StoreSales;
+DROP TABLE IF EXISTS Store;
+DROP TABLE IF EXISTS Division;
+
+CREATE TABLE Division
+(		
+	ID							INT					PRIMARY KEY AUTO_INCREMENT,
+	DivisionNumber	VARCHAR(3)	NOT NULL,
+	Name						VARCHAR(50)	NOT NULL,
+	Address					VARCHAR(75)	NOT NULL,
+ 	City						VARCHAR(50)	NOT NULL,
+ 	State						VARCHAR(2)	NOT NULL,
+ 	Zipcode					VARCHAR(5)	NOT NULL,
+	DateCreated			DATETIME 		DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	DateUpdated			DATETIME 		DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+ 	CONSTRAINT udivnbr UNIQUE (DivisionNumber)
+);
+
+CREATE TABLE Store
+(
+	ID							INT					PRIMARY KEY AUTO_INCREMENT,
+	DivisionID			INT					NOT NULL,
+	StoreNumber			VARCHAR(5) 	NOT NULL,
+    Name          VARCHAR(50) NOT NULL,
+	Address					VARCHAR(75)	NOT NULL,
+	City						VARCHAR(50)	NOT NULL,
+	State						VARCHAR(2)	NOT NULL,
+	Zipcode					VARCHAR(5)	NOT NULL,
+	DateCreated			DATETIME 		DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	DateUpdated			DATETIME 		DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+	FOREIGN KEY (DivisionID) REFERENCES Division (ID),
+	CONSTRAINT div_store UNIQUE (DivisionID, StoreNumber)
+);
+
+CREATE TABLE StoreSales
+(
+	ID							INT						PRIMARY KEY AUTO_INCREMENT,
+	StoreID					INT						NOT NULL,
+	Year						INT       		NOT NULL,
+	Week						INT     			NOT NULL,
+	Sales        		DECIMAL(10,2) NOT NULL,
+	DateCreated			DATETIME 			DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	DateUpdated			DATETIME 			DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+	FOREIGN KEY (StoreID) REFERENCES store (ID),
+	CONSTRAINT sales_store UNIQUE (StoreID, Year, Week)
+);
